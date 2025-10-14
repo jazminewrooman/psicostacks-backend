@@ -59,10 +59,12 @@ Fill in `.env.local` with your Supabase credentials and the generated key.
 4. **Run the development server:**
 
 ```bash
-npm run dev
+npm run dev -- -p 3001
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser.
+The backend will run on [http://localhost:3001](http://localhost:3001).
+
+**Note**: The backend runs on port 3001 by default to avoid conflicts with the frontend (which runs on port 3000).
 
 ## API Endpoints
 
@@ -145,9 +147,9 @@ Retrieve decrypted credential data (60-second window).
 
 ### POST /api/ai-interpret
 
-Simple AI interpretation stub (returns grade band and bullets).
+AI interpretation endpoint for processing psychological assessment data.
 
-**Request:**
+**Request Format 1 (Structured scores - JSON):**
 ```json
 {
   "scores": { "accuracy": 85, "speed": 70 },
@@ -155,17 +157,29 @@ Simple AI interpretation stub (returns grade band and bullets).
 }
 ```
 
+**Request Format 2 (PDF file - FormData):**
+```
+Content-Type: multipart/form-data
+
+file: [PDF file]
+fileName: "assessment.pdf"
+```
+
 **Response:**
 ```json
 {
   "band": "A",
   "bullets": [
-    "Strong overall performance on short tasks",
-    "Reaction speed: 70 ms",
-    "Role signals: detail-oriented, fast-paced"
-  ]
+    "PDF successfully processed",
+    "Extracted 3 pages of text",
+    "AI interpretation pending implementation"
+  ],
+  "rawTextLength": 1234,
+  "fileName": "assessment.pdf"
 }
 ```
+
+**Note**: The endpoint now accepts PDF files via FormData and extracts text using `pdf-parse`. The AI interpretation of the extracted text is pending implementation.
 
 ## Project Structure
 
