@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { Mistral } from '@mistralai/mistralai'
+import { createCredential } from '@/lib/credentials'
 
 // CORS headers to allow requests from frontend
 const corsHeaders = {
@@ -26,10 +27,18 @@ export async function POST(req: Request) {
     try {
       const formData = await req.formData()
       const file = formData.get('file') as File
+      const email = formData.get('email') as string
       
       if (!file) {
         return NextResponse.json(
           { error: 'No file provided' },
+          { status: 400, headers: corsHeaders }
+        )
+      }
+      
+      if (!email || !email.includes('@')) {
+        return NextResponse.json(
+          { error: 'Valid email is required' },
           { status: 400, headers: corsHeaders }
         )
       }
@@ -114,12 +123,50 @@ JSON:`
         }
       }
       
+      // Create verifiable credential
+      const reportJson = {
+        fileName: file.name,
+        numPages: data.numpages,
+        rawTextLength: rawText.length,
+        extractedAt: new Date().toISOString(),
+        interpretation: {
+          band: interpretation.band || 'B',
+          bullets: interpretation.bullets || []
+        },
+        metadata: {
+          pdfParser: 'pdf-parse@1.1.1',
+          aiModel: 'mistral-small-latest',
+          schemaVersion: 'psicostacks:v1'
+        }
+      }
+
+      const summary = {
+        band: interpretation.band || 'B',
+        bullets: interpretation.bullets || []
+      }
+
+      // Create credential using shared function
+      const credential = await createCredential({
+        email,
+        reportJson,
+        summary,
+        schemaId: 'psicostacks:v1',
+      })
+
       return NextResponse.json({ 
         band: interpretation.band || 'B',
         bullets: interpretation.bullets || [],
-        rawTextLength: rawText.length,
-        numPages: data.numpages,
-        fileName: file.name
+        credential: {
+          id: credential.id,
+          commitmentHash: credential.commitmentHash,
+          expiryAt: credential.expiryAt,
+          status: credential.status, // 'pending' - needs blockchain mint
+        },
+        metadata: {
+          fileName: file.name,
+          numPages: data.numpages,
+          rawTextLength: rawText.length
+        }
       }, { headers: corsHeaders })
       
     } catch (error) {
