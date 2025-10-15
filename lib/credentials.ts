@@ -23,7 +23,8 @@ export async function createCredential({
 }) {
   // Encrypt and store report in Supabase Storage
   const enc = encryptJson(reportJson)
-  const storageKey = `reports/${randomId('r_')}.json`
+  // Don't include 'reports/' prefix since that's the bucket name
+  const storageKey = `${randomId('r_')}.json`
   
   const { error: upErr } = await supabaseAdmin.storage
     .from('reports')

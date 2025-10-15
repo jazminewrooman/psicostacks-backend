@@ -128,6 +128,7 @@ JSON:`
         fileName: file.name,
         numPages: data.numpages,
         rawTextLength: rawText.length,
+        extractedText: rawText, // Full text for employer to review
         extractedAt: new Date().toISOString(),
         interpretation: {
           band: interpretation.band || 'B',
