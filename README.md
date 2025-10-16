@@ -7,6 +7,8 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)](https://www.typescriptlang.org/)
 [![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL-3ecf8e)](https://supabase.com/)
 
+🌐 **Live API:** [https://psicostacks-backend.vercel.app/](https://psicostacks-backend.vercel.app/)
+
 ## 📋 Table of Contents
 
 - [Overview](#overview)
@@ -26,7 +28,7 @@
 
 The **PsicoStacks Backend** is a RESTful API that handles:
 
-- **AI-powered PDF processing** with OpenAI GPT-4
+- **AI-powered PDF processing** with Mistral AI
 - **Credential management** with encryption
 - **Token-based verification** system
 - **Blockchain integration** tracking
@@ -46,7 +48,7 @@ The **PsicoStacks Backend** is a RESTful API that handles:
 
 ### AI Processing
 - 📄 **PDF text extraction** (pdf-parse)
-- 🤖 **OpenAI GPT-4 integration** for analysis
+- 🤖 **Mistral AI integration** for analysis
 - 📊 **Structured data extraction** from assessments
 - 🎯 **Band assignment** (A, B, C) based on performance
 
@@ -86,9 +88,9 @@ The **PsicoStacks Backend** is a RESTful API that handles:
        ├──────────────┐
        │              │
        ▼              ▼
-┌─────────────┐  ┌──────────┐
-│  Supabase   │  │  OpenAI  │
-│  PostgreSQL │  │  GPT-4   │
+┌─────────────┐  ┌─────────────┐
+│  Supabase   │  │  Mistral  │
+│  PostgreSQL │  │    AI    │
 └─────────────┘  └──────────┘
 ```
 
@@ -128,7 +130,7 @@ Access full report (60s)
 - **Encryption:** Node.js `crypto` (AES-256-GCM)
 
 ### AI & Processing
-- **AI:** [OpenAI API](https://openai.com/) (GPT-4)
+- **AI:** [Mistral AI](https://mistral.ai/) (Mistral Large/Medium)
 - **PDF Processing:** [pdf-parse](https://www.npmjs.com/package/pdf-parse)
 - **File Upload:** [multer](https://www.npmjs.com/package/multer)
 
@@ -148,7 +150,7 @@ Access full report (60s)
 Node.js >= 18.x
 npm >= 9.x
 Supabase account
-OpenAI API key
+Mistral AI API key
 ```
 
 ### Installation
@@ -178,8 +180,8 @@ PORT=3001
 SUPABASE_URL=https://your-project.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 
-# OpenAI
-OPENAI_API_KEY=sk-...
+# Mistral AI
+MISTRAL_API_KEY=your-mistral-api-key
 
 # Encryption
 CREDENTIALS_ENC_KEY=<generate-with-openssl>
@@ -519,7 +521,7 @@ const decrypted = Buffer.concat([
 
 **Never commit:**
 - `SUPABASE_SERVICE_ROLE_KEY`
-- `OPENAI_API_KEY`
+- `MISTRAL_API_KEY`
 - `CREDENTIALS_ENC_KEY`
 
 **Rotation:**
@@ -539,8 +541,8 @@ NODE_ENV=development
 SUPABASE_URL=https://xxxxxxxxxxxxx.supabase.co
 SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
-# OpenAI
-OPENAI_API_KEY=sk-proj-...
+# Mistral AI
+MISTRAL_API_KEY=your-mistral-api-key
 
 # Encryption (32 bytes base64)
 CREDENTIALS_ENC_KEY=<base64-encoded-32-bytes>
@@ -587,7 +589,7 @@ psicostacks-backend/
 │   │   └── verify.ts            # Verification endpoints
 │   ├── lib/
 │   │   ├── supabase.ts          # Supabase client
-│   │   ├── openai.ts            # OpenAI client
+│   │   ├── mistral.ts           # Mistral AI client
 │   │   ├── crypto.ts            # Encryption utilities
 │   │   └── pdf.ts               # PDF processing
 │   ├── middleware/
@@ -646,7 +648,7 @@ PORT=3001
 NODE_ENV=production
 SUPABASE_URL=<production-url>
 SUPABASE_SERVICE_ROLE_KEY=<production-key>
-OPENAI_API_KEY=<production-key>
+MISTRAL_API_KEY=<production-key>
 CREDENTIALS_ENC_KEY=<production-key>
 FRONTEND_URL=https://psicostacks.com
 ```
@@ -683,10 +685,10 @@ openssl rand -base64 32
 - Verify tables exist
 - Check network connectivity
 
-**3. "OpenAI API error"**
-- Verify `OPENAI_API_KEY` is valid
+**3. "Mistral AI API error"**
+- Verify `MISTRAL_API_KEY` is valid
 - Check API quota/billing
-- Try different model (gpt-3.5-turbo)
+- Try different model (mistral-medium)
 
 **4. "PDF parsing failed"**
 - Ensure PDF is not encrypted
@@ -699,7 +701,7 @@ openssl rand -base64 32
 
 - [Express.js Documentation](https://expressjs.com/)
 - [Supabase Documentation](https://supabase.com/docs)
-- [OpenAI API Reference](https://platform.openai.com/docs)
+- [Mistral AI Documentation](https://docs.mistral.ai/)
 - [pdf-parse](https://www.npmjs.com/package/pdf-parse)
 
 ---
