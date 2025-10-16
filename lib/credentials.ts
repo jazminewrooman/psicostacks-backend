@@ -4,19 +4,19 @@ import { randomId } from './id'
 
 /**
  * Creates a verifiable credential from assessment report data
- * @param email Candidate's email
+ * @param walletAddress Candidate's Stacks wallet address (more private than email)
  * @param reportJson Complete report data (will be encrypted and stored)
  * @param summary Summary/result data (band, bullets, etc.)
  * @param schemaId Schema identifier (default: 'psicostacks:v1')
  * @returns Credential metadata (id, sbtId, commitmentHash, expiryAt)
  */
 export async function createCredential({
-  email,
+  walletAddress,
   reportJson,
   summary,
   schemaId = 'psicostacks:v1',
 }: {
-  email: string
+  walletAddress: string
   reportJson: any
   summary: any
   schemaId?: string
@@ -47,7 +47,7 @@ export async function createCredential({
   const { data, error } = await supabaseAdmin
     .from('credentials')
     .insert({
-      candidate_email: email,
+      wallet_address: walletAddress,
       schema_id: schemaId,
       sbt_id: null, // Will be updated after blockchain mint
       commitment_hash: commitmentHash,

@@ -8,14 +8,14 @@ import { createCredential } from '@/lib/credentials'
  */
 export async function POST(req: Request) {
   try {
-    const { email, schemaId, reportJson, summary } = await req.json()
+    const { walletAddress, schemaId, reportJson, summary } = await req.json()
     
-    if (!email || !reportJson || !summary) {
-      return NextResponse.json({ error: 'Missing required fields: email, reportJson, summary' }, { status: 400 })
+    if (!walletAddress || !reportJson || !summary) {
+      return NextResponse.json({ error: 'Missing required fields: walletAddress, reportJson, summary' }, { status: 400 })
     }
 
     const credential = await createCredential({
-      email,
+      walletAddress,
       reportJson,
       summary,
       schemaId,
@@ -23,9 +23,9 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       credentialId: credential.id,
-      sbtId: credential.sbtId,
       commitmentHash: credential.commitmentHash,
       expiryAt: credential.expiryAt,
+      status: credential.status,
     })
   } catch (e: any) {
     console.error('Error creating credential:', e)

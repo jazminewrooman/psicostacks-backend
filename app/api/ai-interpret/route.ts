@@ -27,7 +27,7 @@ export async function POST(req: Request) {
     try {
       const formData = await req.formData()
       const file = formData.get('file') as File
-      const email = formData.get('email') as string
+      const walletAddress = formData.get('walletAddress') as string
       
       if (!file) {
         return NextResponse.json(
@@ -36,9 +36,9 @@ export async function POST(req: Request) {
         )
       }
       
-      if (!email || !email.includes('@')) {
+      if (!walletAddress) {
         return NextResponse.json(
-          { error: 'Valid email is required' },
+          { error: 'Valid Stacks wallet address is required' },
           { status: 400, headers: corsHeaders }
         )
       }
@@ -148,7 +148,7 @@ JSON:`
 
       // Create credential using shared function
       const credential = await createCredential({
-        email,
+        walletAddress,
         reportJson,
         summary,
         schemaId: 'psicostacks:v1',

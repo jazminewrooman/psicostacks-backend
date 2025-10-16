@@ -13,26 +13,41 @@ export async function OPTIONS() {
 }
 
 /**
- * GET /api/credentials/mine?email=user@example.com
- * Returns all credentials for a given candidate email
+ * GET /api/credentials/mine?wallet=SP...
+ * Returns all credentials for a given wallet address
  */
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url)
-  const email = searchParams.get('email')
+  const wallet = searchParams.get('wallet')
 
-  if (!email) {
+  if (!wallet) {
     return NextResponse.json(
-      { error: 'email parameter required' },
+      { error: 'wallet parameter required' },
       { status: 400, headers: corsHeaders }
     )
   }
 
   try {
-    const { data, error } = await supabaseAdmin
+    // Try to find by wallet_address first
+    let { data, error } = await supabaseAdmin
       .from('credentials')
       .select('id, blockchain_id, sbt_id, status, summary, issued_at, expiry_at, revoked')
-      .eq('candidate_email', email)
+      .eq('wallet_address', wallet)
       .order('issued_at', { ascending: false })
+
+    // Fallback: if no results, try with old email format (temporary backward compatibility)
+    if (!error && (!data || data.length === 0)) {
+      const legacyEmail = `${wallet}@stacks`
+      const { data: legacyData, error: legacyError } = await supabaseAdmin
+        .from('credentials')
+        .select('id, blockchain_id, sbt_id, status, summary, issued_at, expiry_at, revoked')
+        .eq('candidate_email', legacyEmail)
+        .order('issued_at', { ascending: false })
+      
+      if (!legacyError && legacyData) {
+        data = legacyData
+      }
+    }
 
     if (error) {
       throw error

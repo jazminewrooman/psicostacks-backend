@@ -37,7 +37,7 @@ export async function POST(req: Request) {
   // Fetch credential
   const { data: cred, error: e2 } = await supabaseAdmin
     .from('credentials')
-    .select('blockchain_id, candidate_email, summary, expiry_at, revoked')
+    .select('blockchain_id, wallet_address, summary, expiry_at, revoked')
     .eq('id', vtok.credential_id)
     .single()
   
@@ -61,7 +61,7 @@ export async function POST(req: Request) {
 
   return NextResponse.json({
     blockchain_id: cred.blockchain_id,
-    candidate_email: cred.candidate_email,
+    wallet_address: cred.wallet_address,
     summary: cred.summary,
     expiry_at: cred.expiry_at,
     revoked: cred.revoked,
